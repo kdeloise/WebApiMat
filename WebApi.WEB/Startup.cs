@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DAL.EF;
 using WebApi.DAL.Entities;
+using WebApi.WEB.Logger;
 
 namespace WebApi.WEB
 {
@@ -43,7 +44,7 @@ namespace WebApi.WEB
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<UsersDbContext>();
 
-            // конфигурация Cookie с целью использования их для хранения авторизации
+            // Конфигурация Cookie с целью использования их для хранения авторизации
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -52,7 +53,7 @@ namespace WebApi.WEB
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
-            {
+            { 
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi.WEB", Version = "v1" });
             });
         }
@@ -73,6 +74,9 @@ namespace WebApi.WEB
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Подключаем логер
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
