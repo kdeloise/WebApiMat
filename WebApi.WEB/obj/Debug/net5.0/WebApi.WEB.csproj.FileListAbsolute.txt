@@ -68,3 +68,5 @@ C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\Humanizer.dll
 C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\Newtonsoft.Json.dll
 C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\Microsoft.AspNetCore.Http.Features.dll
+C:\Users\Jimmy\Desktop\WebApi.WEB\WebApi.WEB\bin\Debug\net5.0\System.IO.Pipelines.dll

@@ -1,0 +1,20 @@
+Path: /api/Materials/info/all
+QueryString: 
+Method: GET
+RequestBody: 
+Requested at: 14.02.2021 21:02:32
+Response: [{"id":1,"materialName":"f54fb184dbbc67988db66585fc31ef69.jpg","path":"../WebApi.DAL/Files/f54fb184dbbc67988db66585fc31ef69.jpg","category":0,"versionNumber":1,"metaDateTime":"2021-02-09T16:15:45.6065287","metaFileSize":197622},{"id":2,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":1,"metaDateTime":"2021-02-09T16:31:30.0830268","metaFileSize":252832},{"id":3,"materialName":"e77225136405701400446ad0934a6f8e.jpg","path":"../WebApi.DAL/Files/e77225136405701400446ad0934a6f8e.jpg","category":1,"versionNumber":1,"metaDateTime":"2021-02-09T16:33:06.0319164","metaFileSize":163462},{"id":4,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":2,"metaDateTime":"2021-02-09T17:33:47.4244377","metaFileSize":252832},{"id":5,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":3,"metaDateTime":"2021-02-09T17:34:05.0779584","metaFileSize":252832},{"id":6,"materialName":"b5313b5b9d4713d5b7b0965753b85403.jpg","path":"../WebApi.DAL/Files/b5313b5b9d4713d5b7b0965753b85403.jpg","category":1,"versionNumber":1,"metaDateTime":"2021-02-12T19:21:13.1673731","metaFileSize":193194}]
+ResponseCode: 200
+Responded at: 14.02.2021 21:02:32
+
+
+Path: /api/Materials/info/all
+QueryString: 
+Method: GET
+RequestBody: 
+Requested at: 14.02.2021 21:03:48
+Response: [{"id":1,"materialName":"f54fb184dbbc67988db66585fc31ef69.jpg","path":"../WebApi.DAL/Files/f54fb184dbbc67988db66585fc31ef69.jpg","category":0,"versionNumber":1,"metaDateTime":"2021-02-09T16:15:45.6065287","metaFileSize":197622},{"id":2,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":1,"metaDateTime":"2021-02-09T16:31:30.0830268","metaFileSize":252832},{"id":3,"materialName":"e77225136405701400446ad0934a6f8e.jpg","path":"../WebApi.DAL/Files/e77225136405701400446ad0934a6f8e.jpg","category":1,"versionNumber":1,"metaDateTime":"2021-02-09T16:33:06.0319164","metaFileSize":163462},{"id":4,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":2,"metaDateTime":"2021-02-09T17:33:47.4244377","metaFileSize":252832},{"id":5,"materialName":"rt.jpg","path":"../WebApi.DAL/Files/rt.jpg","category":2,"versionNumber":3,"metaDateTime":"2021-02-09T17:34:05.0779584","metaFileSize":252832},{"id":6,"materialName":"b5313b5b9d4713d5b7b0965753b85403.jpg","path":"../WebApi.DAL/Files/b5313b5b9d4713d5b7b0965753b85403.jpg","category":1,"versionNumber":1,"metaDateTime":"2021-02-12T19:21:13.1673731","metaFileSize":193194}]
+ResponseCode: 200
+Responded at: 14.02.2021 21:03:50
+
+

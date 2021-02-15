@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.DAL\\WebApi.DAL.csproj": {}
+    "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.DAL\\WebApi.DAL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.DAL\\WebApi.DAL.csproj": {
+    "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.DAL\\WebApi.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.DAL\\WebApi.DAL.csproj",
+        "projectUniqueName": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.DAL\\WebApi.DAL.csproj",
         "projectName": "WebApi.DAL",
-        "projectPath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.DAL\\WebApi.DAL.csproj",
+        "projectPath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.DAL\\WebApi.DAL.csproj",
         "packagesPath": "C:\\Users\\Jimmy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.DAL\\obj\\",
+        "outputPath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jimmy\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "Microsoft.AspNetCore.Http.Features": {
+              "target": "Package",
+              "version": "[5.0.3, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[5.0.1, )"
