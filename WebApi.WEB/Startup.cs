@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using WebApi.DAL.EF;
 using WebApi.DAL.Entities;
 using WebApi.WEB.Logger;
+using WebApi.BLL.Interfaces;
+using WebApi.BLL.Services;
 
 namespace WebApi.WEB
 {
@@ -50,10 +52,14 @@ namespace WebApi.WEB
                 options.LoginPath = "/Account/Login";
                 options.LogoutPath = "/Account/Logout";
             });
+                        
+            services.AddScoped<IMaterialServices, MaterialServices>();
+
+            services.AddSingleton<IFileManager, FileManager>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
-            { 
+            {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi.WEB", Version = "v1" });
             });
         }
@@ -75,7 +81,7 @@ namespace WebApi.WEB
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Подключаем логер
+            // Подключаем Middleware
             app.UseMiddleware<LoggingMiddleware>();
 
             app.UseEndpoints(endpoints =>

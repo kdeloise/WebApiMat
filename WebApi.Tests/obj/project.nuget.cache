@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "XYpRNzeR3yYCxvS3UckmJD2wdYdTuVMU4j+6VQTIKXylygUFH7A1yuVyB0lp6PfFTEqcOUAzVBPM5CnPESmh8g==",
+  "dgSpecHash": "3ObbNtGnlZNa+Klcf9s5/rhnE83sOOJWchT2QZm4sB6G4XxyjnfqgK2qChO6w8g+s1G5OqOKUwvpSWRFXWzxjA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.Tests\\WebApi.Tests.csproj",
+  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.Tests\\WebApi.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jimmy\\.nuget\\packages\\coverlet.collector\\1.3.0\\coverlet.collector.1.3.0.nupkg.sha512",
     "C:\\Users\\Jimmy\\.nuget\\packages\\microsoft.codecoverage\\16.7.1\\microsoft.codecoverage.16.7.1.nupkg.sha512",

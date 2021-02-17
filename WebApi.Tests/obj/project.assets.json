@@ -5722,11 +5722,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.Tests\\WebApi.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.Tests\\WebApi.Tests.csproj",
       "projectName": "WebApi.Tests",
-      "projectPath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.Tests\\WebApi.Tests.csproj",
+      "projectPath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.Tests\\WebApi.Tests.csproj",
       "packagesPath": "C:\\Users\\Jimmy\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.Tests\\obj\\",
+      "outputPath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Jimmy\\AppData\\Roaming\\NuGet\\NuGet.Config",
