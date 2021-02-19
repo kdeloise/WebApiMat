@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,142 +11,88 @@ using WebApi.BLL.Interfaces;
 using WebApi.BLL.Services;
 using WebApi.DAL.EF;
 using WebApi.DAL.Entities;
+using WebApi.DAL.Interfaces;
 
 namespace WebApi.BLL.Services
 {
     public class MaterialServices : IMaterialServices
     {
-        private readonly MaterialsDbContext _context;
+        private readonly IDBServices _dbServices;
         private readonly IFileManager _fileManager;
 
-        public MaterialServices(MaterialsDbContext context, IFileManager fileManager)
-        {            
-            _context = context;
+        public MaterialServices(IDBServices dbServices, IFileManager fileManager)
+        {
+            _dbServices = dbServices;
             _fileManager = fileManager;
-        }
-
-        public IQueryable<Material> GetMaterialsByTheFilters(MaterialCategories category, double minSize, double maxSize)
-        {
-            return _context.Materialss.Where(x => x.category == category)
-                                                .Where(x => x.metaFileSize >= minSize)
-                                                .Where(x => x.metaFileSize <= maxSize);
-        }
-
-        public MaterialCategories GetCategoryOfMaterial(string fileName)
-        {
-            return _context.Materialss.Where(x => x.materialName == fileName)
-                                                  .First(x => x.category != 0).category;
-        }
-
-        #nullable enable
-        public IEnumerable<Material> GetMaterials(string? fileName)
-        {
-            return ((fileName == null)
-                ? _context.Materialss.ToList()
-                : _context.Materialss.Where(x => x.materialName == fileName).ToList());
-        }
-
-        #nullable enable
-        public int GetCountOfMaterials(string? fileName)
-        {
-            return ((fileName != null)
-                ? _context.Materialss.Count(x => x.materialName == fileName)
-                : _context.Materialss.Count());
-        }
-
-        public bool ValidateOfCategory(MaterialCategories category)
-        {
-            return Enum.IsDefined(typeof(MaterialCategories), category);
-        }
-
-        public int GetActualVersion(string fileName)
-        {
-            return GetMaterials(fileName).Max(x => x.versionNumber);
-        }
-
-        public string GetPathOfMaterialByTheVersionAndName(string fileName, int version)
-        {
-            return _context.Materialss.Where(x => x.materialName == fileName)
-                .First(x => x.versionNumber == version).path;
-        }
+        }        
 
         public async Task AddNewMaterialToDB(Material material, MaterialFileBM fileMaterialBM)
         {
             var path = await _fileManager.SaveFile(fileMaterialBM.FileBytes, fileMaterialBM.FileName);
 
-            material.path = path;
+            var materialVersion = new MaterialVersion
+            {
+                Material = material,
+                MetaDateTime = DateTime.Now,
+                MetaFileSize = fileMaterialBM.FileSize,
+                VersionNumber = 1, 
+                Path = path
+            };
 
-            await _context.AddAsync(material);
-            await _context.SaveChangesAsync();
+            material.ActualVersion = 1;
+            material.Versions.Add(materialVersion);
+
+            await _dbServices.SaveMaterial(material, materialVersion);
         }
 
         public async Task AddNewMaterialVersionToDb(MaterialFileBM fileMaterialBM, int version)
         {
             var path = await _fileManager.SaveFile(fileMaterialBM.FileBytes, fileMaterialBM.FileName);
-            var category = GetCategoryOfMaterial(fileMaterialBM.FileName);
 
-            Material newFile = new Material
+            Material newFile = _dbServices.GetMaterialByName(fileMaterialBM.FileName);
+
+            var materialVersion = new MaterialVersion
             {
-                materialName = fileMaterialBM.FileName,
-                path = path,
-                metaFileSize = fileMaterialBM.FileSize,
-                category = category,
-                metaDateTime = DateTime.Now,
-                versionNumber = version
+                Material = newFile,
+                MetaDateTime = DateTime.Now,
+                MetaFileSize = fileMaterialBM.FileSize,
+                VersionNumber = version,
+                Path = path
             };
 
-            await _context.AddAsync(newFile);
-            await _context.SaveChangesAsync();
+            newFile.ActualVersion = version;
+            newFile.Versions.Add(materialVersion);
+
+            await _dbServices.SaveMaterialVersion(materialVersion);
         }
 
         public IEnumerable<Material> GetInfoByTheFiltersFromDb(MaterialCategories category, double minSize, double maxSize)
         {
-            var materials = new List<Material>();
-            var filtersMat = GetMaterialsByTheFilters(category, minSize, maxSize);
-
-            foreach (var mat in filtersMat)
-            {
-                materials.Add(new Material
-                {
-                    materialName = mat.materialName,
-                    category = mat.category,
-                    metaFileSize = mat.metaFileSize,
-                    versionNumber = mat.versionNumber,
-                    metaDateTime = mat.metaDateTime,
-                    path = mat.path
-                });
-            }
-
-            return materials;
+            var filtersMat = _dbServices.GetMaterialsByTheFilters(category, minSize, maxSize);
+            return filtersMat;
         }
 
         public FileStream DownloadMaterialByName(string fileName)
         {
-            var actualVersion = GetActualVersion(fileName);
-            var path = GetPathOfMaterialByTheVersionAndName(fileName, actualVersion);
+            var actualVersion = _dbServices.GetActualVersion(fileName);
+            var path = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, actualVersion);
 
             return (new FileStream(path, FileMode.Open));
         }
 
         public FileStream DownloadMaterialByNameAndVersion(string fileName, int version)
         {            
-            var path = GetPathOfMaterialByTheVersionAndName(fileName, version);
+            var path = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, version);
 
             return (new FileStream(path, FileMode.Open));
         }
 
         public void ChangeCategoryOfFile(string fileName, MaterialCategories category)
         {
-            var materials = GetMaterials(fileName);
+            var material = _dbServices. GetMaterialByName(fileName);
 
-            foreach (var mat in materials)
-            {
-                mat.category = category;
-                _context.Materialss.Update(mat);
-            }
-            _context.SaveChangesAsync();
+            material.Category = category;
+            _dbServices.UpdateMaterial(material);
         }
     }
-
-
 }

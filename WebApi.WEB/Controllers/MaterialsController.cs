@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebApi.BLL.BM;
 using WebApi.DAL.Entities;
 using WebApi.BLL.Interfaces;
+using WebApi.DAL.Interfaces;
 
 namespace WebApi.WEB.Controllers
 {
@@ -16,58 +17,52 @@ namespace WebApi.WEB.Controllers
     public class MaterialsController : ControllerBase
     {
         private readonly IMaterialServices _materialServices;
+        private readonly IDBServices _dbServices;
 
-        public MaterialsController(IMaterialServices materialServices)
+        public MaterialsController(IMaterialServices materialServices, IDBServices dbServices)
         {
+            _dbServices = dbServices;
             _materialServices = materialServices;
-        }
-
-        [HttpGet]
-        [Route("wtf")]
-        public IActionResult WTF()
-        {
-            return Ok("Что за шляпа");
         }
 
         [HttpPost]
         [Authorize(Roles = "admin, writer")]
         public async Task<IActionResult> AddNewMaterial(IFormFile file, MaterialCategories category)
         {
-            if (_materialServices.GetCountOfMaterials(file.FileName) > 0)
-            {
-                return BadRequest($"File: {file.FileName} already exists");
-            }
-            if (_materialServices.ValidateOfCategory(category) == false)
-            {
-                return BadRequest($"Error category. (Presentation, Application, Other)");
-            }
-
-            byte[] fileBytes;
-
-            await using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                fileBytes = memoryStream.ToArray();
-            }
-
-            MaterialFileBM fileMaterialBM = new MaterialFileBM
-            {
-                FileName = file.FileName,
-                FileBytes = fileBytes,
-                FileSize = file.Length
-            };
-
-            Material material = new Material
-            {
-                materialName = file.FileName,
-                metaFileSize = file.Length,
-                category = category,
-                metaDateTime = DateTime.Now,
-                versionNumber = 1
-            };
-
             try
             {
+                if (_dbServices.CheckFilesInDB(file.FileName))
+                {
+                    return BadRequest($"File: {file.FileName} already exists");
+                }
+                if (_dbServices.ValidateOfCategory(category) == false)
+                {
+                    return BadRequest($"Error category. (Presentation, Application, Other)");
+                }
+
+                byte[] fileBytes;
+
+                await using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    fileBytes = memoryStream.ToArray();
+                }
+
+                MaterialFileBM fileMaterialBM = new MaterialFileBM
+                {
+                    FileName = file.FileName,
+                    FileBytes = fileBytes,
+                    FileSize = file.Length
+                };
+
+                Material material = new Material
+                {
+                    MaterialName = file.FileName,
+                    Category = category,
+                    ActualVersion = 1,
+                    Versions = new List<MaterialVersion>()
+                };
+
                 await _materialServices.AddNewMaterialToDB(material, fileMaterialBM);
                 return Ok($"Material {file.FileName} has been added successfully");
             }
@@ -82,33 +77,32 @@ namespace WebApi.WEB.Controllers
         [Authorize(Roles = "admin, writer")]
         public async Task<IActionResult> AddNewVersionMaterial(IFormFile file)
         {
-            int count;
-            int version;
-
-            if ((count = _materialServices.GetCountOfMaterials(file.FileName)) > 0)
-            {
-                version = count + 1;
-            }
-            else
-                return BadRequest($"File: {file} don't have in DB yet");
-
-            byte[] fileBytes;
-
-            await using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                fileBytes = memoryStream.ToArray();
-            }
-
-            MaterialFileBM fileMaterialBM = new MaterialFileBM
-            {
-                FileName = file.FileName,
-                FileBytes = fileBytes,
-                FileSize = file.Length
-            };
-
             try
             {
+                int version;
+
+                if (_dbServices.CheckFilesInDB(file.FileName))
+                {
+                    version = _dbServices.GetActualVersion(file.FileName) + 1;
+                }
+                else
+                    return BadRequest($"File: {file} don't have in DB yet");
+
+                byte[] fileBytes;
+
+                await using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    fileBytes = memoryStream.ToArray();
+                }
+
+                MaterialFileBM fileMaterialBM = new MaterialFileBM
+                {
+                    FileName = file.FileName,
+                    FileBytes = fileBytes,
+                    FileSize = file.Length
+                };
+
                 await _materialServices.AddNewMaterialVersionToDb(fileMaterialBM, version);
                 return Ok($"Material {file.FileName}v.{version} has been added successfully");
             }
@@ -131,9 +125,9 @@ namespace WebApi.WEB.Controllers
         [Authorize(Roles = "admin, reader")]
         public ActionResult<IEnumerable<Material>> GetAllMaterialsInfo()
         {
-            if (_materialServices.GetCountOfMaterials(null) > 0)
+            if (_dbServices.CheckFilesInDB(null))
             {
-                return Ok(_materialServices.GetMaterials(null));
+                return Ok(_dbServices.GetListOfMaterials());
             }
             else
                 return Ok($"DB is empty");
@@ -142,11 +136,11 @@ namespace WebApi.WEB.Controllers
         [HttpGet]
         [Route("info/{name}")]
         [Authorize(Roles = "admin, reader")]
-        public ActionResult<IEnumerable<Material>> GetInfo(string name)
+        public ActionResult<Material> GetInfo(string name)
         {
-            if (_materialServices.GetCountOfMaterials(name) > 0)
+            if (_dbServices.CheckFilesInDB(name))
             {
-                return Ok(_materialServices.GetMaterials(name));
+                return Ok(_dbServices.GetMaterialByName(name));
             }
             else
                 return BadRequest($"File: {name} does not exists in DB");
@@ -187,7 +181,7 @@ namespace WebApi.WEB.Controllers
         [Authorize(Roles = "admin, writer")]
         public IActionResult ChangeCategory(string name, MaterialCategories category)
         {
-            if (_materialServices.GetCountOfMaterials(name) > 0 && _materialServices.ValidateOfCategory(category) == true)
+            if (_dbServices.CheckFilesInDB(name) && _dbServices.ValidateOfCategory(category) == true)
             {
                 _materialServices.ChangeCategoryOfFile(name, category);
                 return Ok($"Category of File: {name} has been changed to {category}");
@@ -195,6 +189,5 @@ namespace WebApi.WEB.Controllers
             else
                 return BadRequest($"File: {name} does not exists or Error: {category}");
         }
-
     }
 }

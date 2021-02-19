@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.DAL.EF;
 
-namespace WebApi.DAL.Migrations.InitialUsers
+namespace WebApi.DAL.Migrations.Users
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20210209130804_Initial")]
+    [Migration("20210219063320_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

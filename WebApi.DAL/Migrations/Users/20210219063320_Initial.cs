@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebApi.DAL.Migrations.InitialUsers
+namespace WebApi.DAL.Migrations.Users
 {
     public partial class Initial : Migration
     {

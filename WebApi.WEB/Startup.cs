@@ -18,6 +18,8 @@ using WebApi.DAL.Entities;
 using WebApi.WEB.Logger;
 using WebApi.BLL.Interfaces;
 using WebApi.BLL.Services;
+using WebApi.DAL.Interfaces;
+using WebApi.DAL.Services;
 
 namespace WebApi.WEB
 {
@@ -55,7 +57,12 @@ namespace WebApi.WEB
                         
             services.AddScoped<IMaterialServices, MaterialServices>();
 
+            services.AddScoped<IDBServices, DBServices>();
+
             services.AddSingleton<IFileManager, FileManager>();
+
+            services.AddControllers().AddNewtonsoftJson(op =>
+                    op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

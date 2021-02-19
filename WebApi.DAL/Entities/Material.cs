@@ -13,12 +13,10 @@ namespace WebApi.DAL.Entities
 
     public class Material
     {
-        public int id { get; set; }
-        public string materialName { get; set; }
-        public string path { get; set; }
-        public MaterialCategories category { get; set; }
-        public int versionNumber { get; set; }
-        public DateTime metaDateTime { get; set; }
-        public double metaFileSize { get; set; }
+        public int Id { get; set; }
+        public string MaterialName { get; set; }
+        public MaterialCategories Category { get; set; }
+        public int ActualVersion { get; set; }
+        public List<MaterialVersion> Versions { get; set; }
     }
 }
