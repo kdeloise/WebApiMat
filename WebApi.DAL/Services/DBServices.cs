@@ -38,7 +38,7 @@ namespace WebApi.DAL.Services
         }
 
 
-        public IEnumerable<Material> GetMaterialsByTheFilters(MaterialCategories category, double minSize, double maxSize)
+        public IEnumerable<Material> GetMaterialsByTheFilters(int category, double minSize, double maxSize)
         {
             var result = new List<Material>();
             var materials = GetListOfMaterials().Where(x => x.Category == category);
@@ -55,16 +55,13 @@ namespace WebApi.DAL.Services
             return result;
         }
 
-        public MaterialCategories GetCategoryOfMaterial(string fileName)
+        public int GetCategoryOfMaterial(string fileName)
         {
             return _context.Materialss.Where(x => x.MaterialName == fileName)
                                                   .First(x => x.Category != 0).Category;
         }
 
-        public int GetActualVersion(string fileName)
-        {
-            return GetMaterialByName(fileName).ActualVersion;
-        }
+        
 
         public Material GetMaterialByName(string fileName)
         {
@@ -99,11 +96,6 @@ namespace WebApi.DAL.Services
             return ((fileName != null)
                 ? _context.Materialss.Count(x => x.MaterialName == fileName) > 0
                 : _context.Materialss.Count() > 0);
-        }
-
-        public bool ValidateOfCategory(MaterialCategories category)
-        {
-            return Enum.IsDefined(typeof(MaterialCategories), category);
         }
 
         public int GetMaterialIdByName(string fileName)

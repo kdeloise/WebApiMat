@@ -6,9 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using WebApi.BLL.BM;
-using WebApi.DAL.Entities;
+using WebApi.BLL.Categories;
 using WebApi.BLL.Interfaces;
-using WebApi.DAL.Interfaces;
 
 namespace WebApi.WEB.Controllers
 {
@@ -17,11 +16,9 @@ namespace WebApi.WEB.Controllers
     public class MaterialsController : ControllerBase
     {
         private readonly IMaterialServices _materialServices;
-        private readonly IDBServices _dbServices;
 
-        public MaterialsController(IMaterialServices materialServices, IDBServices dbServices)
+        public MaterialsController(IMaterialServices materialServices)
         {
-            _dbServices = dbServices;
             _materialServices = materialServices;
         }
 
@@ -31,11 +28,11 @@ namespace WebApi.WEB.Controllers
         {
             try
             {
-                if (_dbServices.CheckFilesInDB(file.FileName))
+                if (_materialServices.FileExisting(file.FileName))
                 {
                     return BadRequest($"File: {file.FileName} already exists");
                 }
-                if (_dbServices.ValidateOfCategory(category) == false)
+                if (_materialServices.CategoryExisting(category) == false)
                 {
                     return BadRequest($"Error category. (Presentation, Application, Other)");
                 }
@@ -55,15 +52,22 @@ namespace WebApi.WEB.Controllers
                     FileSize = file.Length
                 };
 
-                Material material = new Material
+                //Material material = new Material
+                //{
+                //    MaterialName = file.FileName,
+                //    Category = category,
+                //    ActualVersion = 1,
+                //    Versions = new List<MaterialVersion>()
+                //};
+
+                MaterialBM materialBM = new MaterialBM
                 {
                     MaterialName = file.FileName,
-                    Category = category,
+                    Category = (int)category,
                     ActualVersion = 1,
-                    Versions = new List<MaterialVersion>()
                 };
 
-                await _materialServices.AddNewMaterialToDB(material, fileMaterialBM);
+                await _materialServices.AddNewMaterialToDB(materialBM, fileMaterialBM);
                 return Ok($"Material {file.FileName} has been added successfully");
             }
             catch (Exception e)
@@ -81,9 +85,9 @@ namespace WebApi.WEB.Controllers
             {
                 int version;
 
-                if (_dbServices.CheckFilesInDB(file.FileName))
+                if (_materialServices.FileExisting(file.FileName))
                 {
-                    version = _dbServices.GetActualVersion(file.FileName) + 1;
+                    version = _materialServices.GetActualVersion(file.FileName) + 1;
                 }
                 else
                     return BadRequest($"File: {file} don't have in DB yet");
@@ -115,7 +119,7 @@ namespace WebApi.WEB.Controllers
         [HttpGet]
         [Route("info/{category}/{minSize}/{maxSize}")]
         [Authorize(Roles = "admin, reader")]
-        public IEnumerable<Material> GetFiltersInfo(MaterialCategories category, double minSize, double maxSize)
+        public IEnumerable<MaterialBM> GetFiltersInfo(MaterialCategories category, double minSize, double maxSize)
         {
             return _materialServices.GetInfoByTheFiltersFromDb(category, minSize, maxSize);
         }
@@ -123,11 +127,11 @@ namespace WebApi.WEB.Controllers
         [HttpGet]
         [Route("info/all")]
         [Authorize(Roles = "admin, reader")]
-        public ActionResult<IEnumerable<Material>> GetAllMaterialsInfo()
+        public ActionResult<IEnumerable<MaterialBM>> GetAllMaterialsInfo()
         {
-            if (_dbServices.CheckFilesInDB(null))
+            if (_materialServices.FileExisting(null))
             {
-                return Ok(_dbServices.GetListOfMaterials());
+                return Ok(_materialServices.GetMaterialsBM());
             }
             else
                 return Ok($"DB is empty");
@@ -136,11 +140,11 @@ namespace WebApi.WEB.Controllers
         [HttpGet]
         [Route("info/{name}")]
         [Authorize(Roles = "admin, reader")]
-        public ActionResult<Material> GetInfo(string name)
+        public ActionResult<MaterialBM> GetInfo(string name)
         {
-            if (_dbServices.CheckFilesInDB(name))
+            if (_materialServices.FileExisting(name))
             {
-                return Ok(_dbServices.GetMaterialByName(name));
+                return Ok(_materialServices.GetMaterialBMbyName(name));
             }
             else
                 return BadRequest($"File: {name} does not exists in DB");
@@ -181,7 +185,7 @@ namespace WebApi.WEB.Controllers
         [Authorize(Roles = "admin, writer")]
         public IActionResult ChangeCategory(string name, MaterialCategories category)
         {
-            if (_dbServices.CheckFilesInDB(name) && _dbServices.ValidateOfCategory(category) == true)
+            if (_materialServices.FileExisting(name) && _materialServices.CategoryExisting(category) == true)
             {
                 _materialServices.ChangeCategoryOfFile(name, category);
                 return Ok($"Category of File: {name} has been changed to {category}");

@@ -12,14 +12,13 @@ namespace WebApi.DAL.Interfaces
         Task SaveMaterialVersion(MaterialVersion materialVersion);
         void UpdateMaterial(Material material);
 
-        IEnumerable<Material> GetMaterialsByTheFilters(MaterialCategories category, double minSize, double maxSize);
-        MaterialCategories GetCategoryOfMaterial(string fileName);
-        int GetActualVersion(string fileName);
+        IEnumerable<Material> GetMaterialsByTheFilters(int category, double minSize, double maxSize);
+        int GetCategoryOfMaterial(string fileName);
+        
         public Material GetMaterialByName(string fileName);
         IEnumerable<Material> GetListOfMaterials();
 #nullable enable
         bool CheckFilesInDB(string? fileName);
-        bool ValidateOfCategory(MaterialCategories category);
         string GetPathOfMaterialByTheVersionAndName(string fileName, int version);
     }
 }

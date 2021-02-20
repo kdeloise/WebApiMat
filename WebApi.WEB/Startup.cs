@@ -1,25 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApi.DAL.EF;
 using WebApi.DAL.Entities;
 using WebApi.WEB.Logger;
-using WebApi.BLL.Interfaces;
 using WebApi.BLL.Services;
 using WebApi.DAL.Interfaces;
 using WebApi.DAL.Services;
+using WebApi.BLL.Interfaces;
 
 namespace WebApi.WEB
 {

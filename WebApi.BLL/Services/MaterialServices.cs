@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebApi.BLL.BM;
+using WebApi.BLL.Categories;
 using WebApi.BLL.Interfaces;
-using WebApi.BLL.Services;
-using WebApi.DAL.EF;
 using WebApi.DAL.Entities;
 using WebApi.DAL.Interfaces;
 
@@ -24,11 +19,93 @@ namespace WebApi.BLL.Services
         {
             _dbServices = dbServices;
             _fileManager = fileManager;
-        }        
+        }
 
-        public async Task AddNewMaterialToDB(Material material, MaterialFileBM fileMaterialBM)
+        public bool FileExisting(string fileName)
+        {
+            return _dbServices.CheckFilesInDB(fileName);
+        }
+
+        public bool CategoryExisting(MaterialCategories category)
+        {
+            return Enum.IsDefined(typeof(MaterialCategories), category);
+        }
+
+        public int GetActualVersion(string fileName)
+        {
+            return _dbServices.GetMaterialByName(fileName).ActualVersion;
+        }
+
+        public MaterialBM GetMaterialBMbyName(string fileName)
+        {
+            var material = _dbServices.GetMaterialByName(fileName);
+            var materialVersionsBM = new List<MaterialVersionBM>();
+
+            foreach (var matV in material.Versions)
+            {
+                materialVersionsBM.Add(new MaterialVersionBM
+                {
+                    Path = matV.Path,
+                    MetaDateTime = matV.MetaDateTime,
+                    MetaFileSize = matV.MetaFileSize,
+                    VersionNumber = matV.VersionNumber
+                });
+            }
+
+            var materialBM = new MaterialBM
+            {
+                MaterialName = material.MaterialName,
+                ActualVersion = material.ActualVersion,
+                Category = material.Category,
+                Versions = materialVersionsBM
+            };
+
+            return materialBM;            
+        }
+
+        public IEnumerable<MaterialBM> GetMaterialsBM()
+        {
+            var materials = _dbServices.GetListOfMaterials();
+            var materialsBM = new List<MaterialBM>();
+
+            foreach (var mat in materials)
+            {
+                var materialVersionsBM = new List<MaterialVersionBM>();
+
+                foreach (var matV in mat.Versions)
+                {
+                    materialVersionsBM.Add(new MaterialVersionBM
+                    {
+                        Path = matV.Path,
+                        MetaDateTime = matV.MetaDateTime,
+                        MetaFileSize = matV.MetaFileSize,
+                        VersionNumber = matV.VersionNumber
+                    });
+                }
+
+                materialsBM.Add(new MaterialBM
+                {
+                    MaterialName = mat.MaterialName,
+                    ActualVersion = mat.ActualVersion,
+                    Category = mat.Category,
+                    Versions = materialVersionsBM
+                });
+            }
+            return materialsBM;
+        }
+
+
+        public async Task AddNewMaterialToDB(MaterialBM materialBM, MaterialFileBM fileMaterialBM)
         {
             var path = await _fileManager.SaveFile(fileMaterialBM.FileBytes, fileMaterialBM.FileName);
+
+            Material material = new Material
+            {
+                MaterialName = materialBM.MaterialName,
+                Category = materialBM.Category,
+                ActualVersion = materialBM.ActualVersion,
+                Versions = new List<MaterialVersion>()
+            };
 
             var materialVersion = new MaterialVersion
             {
@@ -39,7 +116,6 @@ namespace WebApi.BLL.Services
                 Path = path
             };
 
-            material.ActualVersion = 1;
             material.Versions.Add(materialVersion);
 
             await _dbServices.SaveMaterial(material, materialVersion);
@@ -66,15 +142,41 @@ namespace WebApi.BLL.Services
             await _dbServices.SaveMaterialVersion(materialVersion);
         }
 
-        public IEnumerable<Material> GetInfoByTheFiltersFromDb(MaterialCategories category, double minSize, double maxSize)
+        public IEnumerable<MaterialBM> GetInfoByTheFiltersFromDb(MaterialCategories category, double minSize, double maxSize)
         {
-            var filtersMat = _dbServices.GetMaterialsByTheFilters(category, minSize, maxSize);
-            return filtersMat;
+            var filtersMat = _dbServices.GetMaterialsByTheFilters((int)category, minSize, maxSize);
+            var materialsBM = new List<MaterialBM>();
+
+            foreach (var mat in filtersMat)
+            {
+                var materialVersionsBM = new List<MaterialVersionBM>();
+
+                foreach (var matV in mat.Versions)
+                {
+                    materialVersionsBM.Add(new MaterialVersionBM
+                    {
+                        Path = matV.Path,
+                        MetaDateTime = matV.MetaDateTime,
+                        MetaFileSize = matV.MetaFileSize,
+                        VersionNumber = matV.VersionNumber
+                    });
+                }
+
+                materialsBM.Add(new MaterialBM
+                {
+                    MaterialName = mat.MaterialName,
+                    ActualVersion = mat.ActualVersion,
+                    Category = mat.Category,
+                    Versions = materialVersionsBM
+                });
+            }
+
+            return materialsBM;
         }
 
         public FileStream DownloadMaterialByName(string fileName)
         {
-            var actualVersion = _dbServices.GetActualVersion(fileName);
+            var actualVersion = GetActualVersion(fileName);
             var path = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, actualVersion);
 
             return (new FileStream(path, FileMode.Open));
@@ -91,7 +193,7 @@ namespace WebApi.BLL.Services
         {
             var material = _dbServices. GetMaterialByName(fileName);
 
-            material.Category = category;
+            material.Category = (int)category;
             _dbServices.UpdateMaterial(material);
         }
     }
