@@ -52,14 +52,6 @@ namespace WebApi.WEB.Controllers
                     FileSize = file.Length
                 };
 
-                //Material material = new Material
-                //{
-                //    MaterialName = file.FileName,
-                //    Category = category,
-                //    ActualVersion = 1,
-                //    Versions = new List<MaterialVersion>()
-                //};
-
                 MaterialBM materialBM = new MaterialBM
                 {
                     MaterialName = file.FileName,
@@ -67,7 +59,7 @@ namespace WebApi.WEB.Controllers
                     ActualVersion = 1,
                 };
 
-                await _materialServices.AddNewMaterialToDB(materialBM, fileMaterialBM);
+                await _materialServices.CreateMaterial(materialBM, fileMaterialBM);
                 return Ok($"Material {file.FileName} has been added successfully");
             }
             catch (Exception e)
@@ -107,7 +99,7 @@ namespace WebApi.WEB.Controllers
                     FileSize = file.Length
                 };
 
-                await _materialServices.AddNewMaterialVersionToDb(fileMaterialBM, version);
+                await _materialServices.CreateMaterialVersion(fileMaterialBM, version);
                 return Ok($"Material {file.FileName}v.{version} has been added successfully");
             }
             catch (Exception e)
@@ -121,7 +113,7 @@ namespace WebApi.WEB.Controllers
         [Authorize(Roles = "admin, reader")]
         public IEnumerable<MaterialBM> GetFiltersInfo(MaterialCategories category, double minSize, double maxSize)
         {
-            return _materialServices.GetInfoByTheFiltersFromDb(category, minSize, maxSize);
+            return _materialServices.GetInfoByTheFilters(category, minSize, maxSize);
         }
 
         [HttpGet]

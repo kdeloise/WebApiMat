@@ -80,11 +80,7 @@ namespace WebApi.DAL.Services
             var materialsVersion = _context.MaterialVersions.ToList();
             foreach (var mat in materials)
             {
-                i++;
-            }
-            while (--i > 0)
-            {
-                materials[i].Versions = new List<MaterialVersion>
+                mat.Versions = new List<MaterialVersion>
                 (_context.MaterialVersions.Where(x => x.MaterialId == GetMaterialIdByName(materials[i].MaterialName)).ToList());
             }
             return materials;
@@ -94,8 +90,8 @@ namespace WebApi.DAL.Services
         public bool CheckFilesInDB(string? fileName)
         {
             return ((fileName != null)
-                ? _context.Materialss.Count(x => x.MaterialName == fileName) > 0
-                : _context.Materialss.Count() > 0);
+                ? _context.Materialss.Any(x => x.MaterialName == fileName)
+                : _context.Materialss.Any());
         }
 
         public int GetMaterialIdByName(string fileName)
@@ -105,12 +101,9 @@ namespace WebApi.DAL.Services
 
         public string GetPathOfMaterialByTheVersionAndName(string fileName, int version)
         {
-            var material = GetMaterialByName(fileName);
             var Id = GetMaterialIdByName(fileName);
-            var materialVersions = _context.MaterialVersions.Where(x => x.MaterialId == Id);
-            material.Versions = materialVersions.ToList();
-            return material.Versions
-                    .First(x => x.VersionNumber == version).Path;
+            var hash = _context.MaterialVersions.First(x => x.MaterialId == Id && x.VersionNumber == version).Hash;
+            return hash;
         }
     }
 }

@@ -15,9 +15,9 @@ namespace WebApi.BLL.Interfaces
         IEnumerable<MaterialBM> GetMaterialsBM();
 
 
-        Task AddNewMaterialToDB(MaterialBM materialBM, MaterialFileBM fileMaterialBM);
-        Task AddNewMaterialVersionToDb(MaterialFileBM fileMaterialBM, int version);
-        IEnumerable<MaterialBM> GetInfoByTheFiltersFromDb(MaterialCategories category, double minSize, double maxSize);
+        Task CreateMaterial(MaterialBM materialBM, MaterialFileBM fileMaterialBM);
+        Task CreateMaterialVersion(MaterialFileBM fileMaterialBM, int version);
+        IEnumerable<MaterialBM> GetInfoByTheFilters(MaterialCategories category, double minSize, double maxSize);
         FileStream DownloadMaterialByName(string fileName);
         FileStream DownloadMaterialByNameAndVersion(string fileName, int version);
         void ChangeCategoryOfFile(string fileName, MaterialCategories category);

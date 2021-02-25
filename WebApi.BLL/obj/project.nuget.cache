@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "w+1JQeuzxTjvfoOCS2vA3vHa5AJAkuAofsj/jcxuBZKXbiY1dx4JH/ZrU5jTUBxPFyzFynNZx5gmbIokzBZG7g==",
+  "dgSpecHash": "LGivqUm6dXAs7f4dUbbgPgcFWNkUZV6UZd1IeVhPt0q9g/dYjjTBPuCr38mtj/FZQRy+6ClH4M0RtLdRRF9ZmQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.BLL\\WebApi.BLL.csproj",
+  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.BLL\\WebApi.BLL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jimmy\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.1\\microsoft.aspnetcore.cryptography.internal.5.0.1.nupkg.sha512",
     "C:\\Users\\Jimmy\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\5.0.1\\microsoft.aspnetcore.cryptography.keyderivation.5.0.1.nupkg.sha512",

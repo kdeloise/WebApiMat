@@ -45,7 +45,7 @@ namespace WebApi.BLL.Services
             {
                 materialVersionsBM.Add(new MaterialVersionBM
                 {
-                    Path = matV.Path,
+                    Hash = matV.Hash,
                     MetaDateTime = matV.MetaDateTime,
                     MetaFileSize = matV.MetaFileSize,
                     VersionNumber = matV.VersionNumber
@@ -76,7 +76,7 @@ namespace WebApi.BLL.Services
                 {
                     materialVersionsBM.Add(new MaterialVersionBM
                     {
-                        Path = matV.Path,
+                        Hash = matV.Hash,
                         MetaDateTime = matV.MetaDateTime,
                         MetaFileSize = matV.MetaFileSize,
                         VersionNumber = matV.VersionNumber
@@ -95,9 +95,10 @@ namespace WebApi.BLL.Services
         }
 
 
-        public async Task AddNewMaterialToDB(MaterialBM materialBM, MaterialFileBM fileMaterialBM)
+        public async Task CreateMaterial(MaterialBM materialBM, MaterialFileBM fileMaterialBM)
         {
-            var path = await _fileManager.SaveFile(fileMaterialBM.FileBytes, fileMaterialBM.FileName);
+            var hash = HashCalculate.CalculateMd5(fileMaterialBM.FileBytes);
+            await _fileManager.SaveFile(fileMaterialBM.FileBytes, hash);
 
             Material material = new Material
             {
@@ -113,7 +114,7 @@ namespace WebApi.BLL.Services
                 MetaDateTime = DateTime.Now,
                 MetaFileSize = fileMaterialBM.FileSize,
                 VersionNumber = 1, 
-                Path = path
+                Hash = hash
             };
 
             material.Versions.Add(materialVersion);
@@ -121,9 +122,10 @@ namespace WebApi.BLL.Services
             await _dbServices.SaveMaterial(material, materialVersion);
         }
 
-        public async Task AddNewMaterialVersionToDb(MaterialFileBM fileMaterialBM, int version)
+        public async Task CreateMaterialVersion(MaterialFileBM fileMaterialBM, int version)
         {
-            var path = await _fileManager.SaveFile(fileMaterialBM.FileBytes, fileMaterialBM.FileName);
+            var hash = HashCalculate.CalculateMd5(fileMaterialBM.FileBytes);
+            await _fileManager.SaveFile(fileMaterialBM.FileBytes, hash);
 
             Material newFile = _dbServices.GetMaterialByName(fileMaterialBM.FileName);
 
@@ -133,7 +135,7 @@ namespace WebApi.BLL.Services
                 MetaDateTime = DateTime.Now,
                 MetaFileSize = fileMaterialBM.FileSize,
                 VersionNumber = version,
-                Path = path
+                Hash = hash
             };
 
             newFile.ActualVersion = version;
@@ -142,7 +144,7 @@ namespace WebApi.BLL.Services
             await _dbServices.SaveMaterialVersion(materialVersion);
         }
 
-        public IEnumerable<MaterialBM> GetInfoByTheFiltersFromDb(MaterialCategories category, double minSize, double maxSize)
+        public IEnumerable<MaterialBM> GetInfoByTheFilters(MaterialCategories category, double minSize, double maxSize)
         {
             var filtersMat = _dbServices.GetMaterialsByTheFilters((int)category, minSize, maxSize);
             var materialsBM = new List<MaterialBM>();
@@ -155,7 +157,7 @@ namespace WebApi.BLL.Services
                 {
                     materialVersionsBM.Add(new MaterialVersionBM
                     {
-                        Path = matV.Path,
+                        Hash = matV.Hash,
                         MetaDateTime = matV.MetaDateTime,
                         MetaFileSize = matV.MetaFileSize,
                         VersionNumber = matV.VersionNumber
@@ -177,21 +179,23 @@ namespace WebApi.BLL.Services
         public FileStream DownloadMaterialByName(string fileName)
         {
             var actualVersion = GetActualVersion(fileName);
-            var path = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, actualVersion);
+            var hash = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, actualVersion);
+            var path = _fileManager.GetPath(hash);
 
             return (new FileStream(path, FileMode.Open));
         }
 
         public FileStream DownloadMaterialByNameAndVersion(string fileName, int version)
-        {            
-            var path = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, version);
+        {
+            var hash = _dbServices.GetPathOfMaterialByTheVersionAndName(fileName, version);
+            var path = _fileManager.GetPath(hash);
 
             return (new FileStream(path, FileMode.Open));
         }
 
         public void ChangeCategoryOfFile(string fileName, MaterialCategories category)
         {
-            var material = _dbServices. GetMaterialByName(fileName);
+            var material = _dbServices.GetMaterialByName(fileName);
 
             material.Category = (int)category;
             _dbServices.UpdateMaterial(material);

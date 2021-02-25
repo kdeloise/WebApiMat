@@ -19,8 +19,4 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Files\" />
-  </ItemGroup>
-
 </Project>

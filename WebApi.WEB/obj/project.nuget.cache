@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/udDP3NADPjcj8rPn+2tXepZIfJ/ZIXjp8H61ConpJ8pHf+5t5Tpc6ZJcoGlWh41fBna9eL79R6uAOpr8SXoMQ==",
+  "dgSpecHash": "QpNd3AePburDLKCtM6Do2buNbiVJMVzrM5cfR9I7b3cP+GZM0B6Fj1o6c9UoUdITeOnkNWJG3WtkTtBZ56bPSQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApi.WEB\\WebApi.WEB\\WebApi.WEB.csproj",
+  "projectFilePath": "C:\\Users\\Jimmy\\Desktop\\WebApiGitMat\\WebApi.WEB\\WebApi.WEB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jimmy\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Jimmy\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

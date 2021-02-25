@@ -47,6 +47,9 @@ namespace WebApi.DAL.Migrations.Materials
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("Hash")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MaterialId")
                         .HasColumnType("int");
 
@@ -55,9 +58,6 @@ namespace WebApi.DAL.Migrations.Materials
 
                     b.Property<double>("MetaFileSize")
                         .HasColumnType("float");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VersionNumber")
                         .HasColumnType("int");

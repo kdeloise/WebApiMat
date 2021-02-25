@@ -7,7 +7,7 @@ namespace WebApi.DAL.Entities
     public class MaterialVersion
     {
         public int Id { get; set; }
-        public string Path { get; set; }
+        public string Hash { get; set; }
         public int VersionNumber { get; set; }
         public double MetaFileSize { get; set; }
         public DateTime MetaDateTime { get; set; }

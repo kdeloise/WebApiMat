@@ -15,9 +15,14 @@ namespace WebApi.DAL.Services
             Directory.CreateDirectory(filesDir);
         }
 
-        public async Task<string> SaveFile(byte[] fileBytes, string fileName)
+        public string GetPath(string hash)
         {
-            var path = filesDir + fileName;
+            return filesDir + hash;
+        }
+
+        public async Task<string> SaveFile(byte[] fileBytes, string hash)
+        {
+            var path = GetPath(hash);
             await File.WriteAllBytesAsync(path, fileBytes);
             return path;
         }
